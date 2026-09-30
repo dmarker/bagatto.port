@@ -1,0 +1,7 @@
+bagatto is a static site generator written in Janet.
+
+While it does not require `lang/janet` to run, it can make use of extensions
+written in Janet and installed into a local tree with `lang/jpm`.
+
+And even without installing `lang/janet`, your site is constructed by writing
+ordinary Janet modules.

@@ -1,0 +1,57 @@
+# Main code comes from git.sr.ht as well as 1 other janet module. The rest
+# comes from github. But also we have C code that just needs to be "placed"
+# correctly. This comes from Janet projects using git sub-tree module to vendor
+# C code.
+#
+# `jpm` handles this outside of ports. For us the problem is that we have
+# multiple sources (github + others) and we need to follow a specific order
+# of install after sorting any git subtrees.
+#
+# This file is just going to put things in variables for easier updating and
+# provide variables for the main Makefile:
+# 	*_TUPLE		for `fetcth`, try and use standard where possible
+# 	JPM_SUBTREE	for `post-extract` to place git sub-trees
+# 	JPM_BOM		for `do-build`, this is the order `jpm install` uses
+
+# The first thing we need is the hash defined as rules often need these. This
+# should (unless there are issues) come straight from the dependencies. Its a
+# starting point anyway!
+HASH_BAGATTO=		${DISTVERSIONPREFIX}${PORTVERSION}
+HASH_MAGO=		51a147f
+HASH_JANET_POSIX_SPAWN=	3e68f49
+HASH_JANET_SH=		221bcc8
+HASH_SPORK=		ff672b6
+HASH_DOCUMENTARIAN=	d41ac6b
+HASH_MARKABLE=		cbc7426
+HASH_TESTAMENT=	c3a7f38
+
+# Also need any subtree hash for C code
+HASH_CMARK_GFM=	587a12b
+
+# fetch info for non-github
+SRHT_TUPLE=	subsetpark:bagatto:${HASH_BAGATTO}:bagatto \
+		subsetpark:mago:${HASH_MAGO}:mago
+
+# use the usual git machinery
+GH_TUPLE=	andrewchambers:janet-posix-spawn:${HASH_JANET_POSIX_SPAWN}:janet_posix_spawn \
+		andrewchambers:janet-sh:${HASH_JANET_SH}:janet_sh \
+		github:cmark-gfm:${HASH_CMARK_GFM}:cmark_gfm \
+		janet-lang:spork:${HASH_SPORK}:spork \
+		pyrmont:documentarian:${HASH_DOCUMENTARIAN}:documentarian \
+		pyrmont:markable:${HASH_MARKABLE}:markable \
+		pyrmont:testament:${HASH_TESTAMENT}:testament
+
+# Need to have a list of subtree(s) to set up, `src:dst`
+JPM_SUBTREE=	cmark-gfm-${HASH_CMARK_GFM}:markable-${HASH_MARKABLE}/cmark-gfm
+
+# Finally we need the ordering with our actual project almost certainly *last*.
+# These are literally the directories created by `extract` for all our source.
+# They are named after the git hash or tag.
+JPM_BOM=	mago-${HASH_MAGO} \
+		janet-posix-spawn-${HASH_JANET_POSIX_SPAWN} \
+		janet-sh-${HASH_JANET_SH} \
+		spork-${HASH_SPORK} \
+		documentarian-${HASH_DOCUMENTARIAN} \
+		markable-${HASH_MARKABLE} \
+		testament-${HASH_TESTAMENT} \
+		bagatto-${HASH_BAGATTO}
